@@ -1,15 +1,67 @@
+import sys
+# import libraries
+import pandas as pd
+from sqlalchemy import create_engine
+import numpy as np
+
+
+
+from sklearn.pipeline import Pipeline
+from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
+from sklearn.model_selection import train_test_split, GridSearchCV
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.multioutput import MultiOutputClassifier
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, make_scorer
+from sklearn.model_selection import GridSearchCV
+from sklearn.svm import SVC
+from sklearn.metrics import classification_report
+
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
+from nltk.stem.porter import PorterStemmer
+nltk.download('punkt')
+nltk.download('stopwords')
+nltk.download('wordnet')
+
+def load_data(database_filepath):
+    engine = create_engine('sqlite:///{}'.format(database_filepath))
+    df = pd.read_sql_table('labeled_messages', engine)
+    
+    X = df['message']
+    Y = df.drop(['id', 'original', 'message', 'genre'], axis=1)
+    category_names = list(Y.columns)
+
+    return X, Y, category_names
+
+
+stop_words = nltk.corpus.stopwords.words("english")
+lemmatizer = nltk.WordNetLemmatizer()
 
 def tokenize(text):
-    pass
+    text = nltk.word_tokenize(text)
+    return [lemmatizer.lemmatize(i).strip().lower() for i in text if i not in stop_words]
+
 
 def build_model():
-    pass
+    random_forest_clf = RandomForestClassifier(n_estimators=8)
+    pipeline = Pipeline([('count', CountVectorizer(tokenizer=tokenize)),
+                         ('tfidf', TfidfTransformer()),
+                        ('clf', MultiOutputClassifier(random_forest_clf))])
+    return pipeline
+
 
 def evaluate_model(model, X_test, Y_test, category_names):
-    pass
+    pred_y = model.predict(X_test)
+    for i, col in enumerate(Y_test):
+        print(col.upper())
+        print(classification_report(Y_test[col], pred_y[:, i]))
+
 
 def save_model(model, model_filepath):
-    pass
+    import pickle
+    with open(model_filepath, 'wb') as file:  
+        pickle.dump(model, file)
+
 
 def main():
     if len(sys.argv) == 3:
