@@ -4,7 +4,9 @@ import pandas as pd
 from sqlalchemy import create_engine
 import numpy as np
 
-
+import re
+import pickle
+import nltk
 
 from sklearn.pipeline import Pipeline
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
