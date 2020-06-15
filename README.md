@@ -1,20 +1,21 @@
 # Disaster Response Pipeline Project
 
-Project Overview In this course, you've learned and built on your data engineering skills to expand your opportunities and potential as a data scientist. In this project, you'll apply these skills to analyze disaster data from Figure Eight to build a model for an API that classifies disaster messages.
+## Introduction
+In this project, I have made an API in which we can send a message on the website, which will then be processessed on the server and will give the prediction of label on which orgainzation can help with this problem.
 
-In the Project Workspace, you'll find a data set containing real messages that were sent during disaster events. You will be creating a machine learning pipeline to categorize these events so that you can send the messages to an appropriate disaster relief agency.
+## Requirements
+- nltk 3.3.0
+- numpy 1.15.2
+- pandas 0.23.4
+- scikit-learn 0.20.0
+- sqlalchemy 1.2.12
 
-Your project will include a web app where an emergency worker can input a new message and get classification results on several categories. The web app will also display visualizations of the data. This project will show off your software skills, including your ability to create basic data pipelines and write clean, organized code!
+## Motivation 
+The motivation behind this project was for welfare of mankind. As during disasters and other calamities, people suffer and thus are in need of various everday items. So different organizations work to fulfil each requirement. But there are thousands of requests and it becomes difficult to identify the main objective of the request.
 
-Project Components There are three components we'll need to complete for this project.
+## Result
+Thus this project was to showcase our data scientist skills to make and end-to-end machine learning pipeline which can be later on deployed on the web, which can automatically classify the request based on the messages, which can foster the help provided by organisations.
 
-ETL Pipeline In a Python script, process_data.py, write a data cleaning pipeline that: Loads the messages and categories datasets Merges the two datasets Cleans the data Stores it in a SQLite database
-
-ML Pipeline In a Python script, train_classifier.py, write a machine learning pipeline that: Loads data from the SQLite database Splits the dataset into training and test sets Builds a text processing and machine learning pipeline Trains and tunes a model using GridSearchCV Outputs results on the test set Exports the final model as a pickle file
-
-Flask Web App We will be taking the user message and classify them into 36 categories. There are some beautiful visualization of the data as well
-
-All of the necessary criteria for developing the pipeline and web app is given in the rubric below https://review.udacity.com/#!/rubrics/1565/view
 
 ### Instructions:
 Run the following commands in the project's root directory to set up your database and model.
