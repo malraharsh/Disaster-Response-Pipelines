@@ -26,6 +26,17 @@ nltk.download('stopwords')
 nltk.download('wordnet')
 
 def load_data(database_filepath):
+    """
+    Loads data from the database
+    
+    Args:
+        database_filepath: path to database
+        
+    Returns:
+        (DataFrame) X: Features
+        (DataFrame) Y: Labels
+    """
+    
     engine = create_engine('sqlite:///{}'.format(database_filepath))
     df = pd.read_sql_table('labeled_messages', engine)
     
@@ -40,19 +51,51 @@ stop_words = nltk.corpus.stopwords.words("english")
 lemmatizer = nltk.WordNetLemmatizer()
 
 def tokenize(text):
+    """
+    Tokenizes the text data
+    
+    Args:
+    text str: Messages as text data
+    
+    Returns:
+    words list: It first normalizing, tokenizing and lemmatizing, then process the data
+    """
     text = nltk.word_tokenize(text)
     return [lemmatizer.lemmatize(i).strip().lower() for i in text if i not in stop_words]
 
 
 def build_model():
+    """
+    Builds the model with GridSearchCV to find best combination of params
+    
+    Returns:
+    Trained model after performing grid search on data
+    """
     random_forest_clf = RandomForestClassifier(n_estimators=8)
+    
     pipeline = Pipeline([('count', CountVectorizer(tokenizer=tokenize)),
                          ('tfidf', TfidfTransformer()),
                         ('clf', MultiOutputClassifier(random_forest_clf))])
-    return pipeline
+    
+    parameters = {'clf__estimator__n_estimators':[7, 10, 20],
+             'clf__estimator__max_depth':[None, 20],
+             'clf__estimator__min_samples_leaf':[2, 4]}
+
+    cv = GridSearchCV(pipeline, parameters, n_jobs=-1, verbose=2)
+    
+    return cv
 
 
 def evaluate_model(model, X_test, Y_test, category_names):
+    """
+    Evaluate the model against a test dataset to find the accuracy.
+    
+    Args:
+        model: Trained model
+        X_test: Test features
+        Y_test: Test labels
+        category_names: String array of category names
+    """
     pred_y = model.predict(X_test)
     for i, col in enumerate(Y_test):
         print(col.upper())
@@ -60,6 +103,13 @@ def evaluate_model(model, X_test, Y_test, category_names):
 
 
 def save_model(model, model_filepath):
+    """
+    Save the model to a Python pickle
+    
+    Args:
+        model: Trained model
+        model_filepath: Path where to save the model
+    """
     import pickle
     with open(model_filepath, 'wb') as file:  
         pickle.dump(model, file)
