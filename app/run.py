@@ -30,6 +30,8 @@ engine = create_engine('sqlite:///../data/DisasterResponse.db')
 df = pd.read_sql_table('labeled_messages', engine)
 engine.dispose()
 
+# engine = create_engine('sqlite:///{}.db'.format('DisasterResponse.db'))
+# df = pd.read_sql_table('labeled_messages', engine)
 
 # load model
 model = joblib.load("../models/classifier.pkl")
