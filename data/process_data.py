@@ -3,6 +3,17 @@ import pandas as pd
 from sqlalchemy import create_engine
 
 def load_data(messages_filepath, categories_filepath):
+    """
+    Loads the messages and categories datasets from the specified filepaths
+    
+    Args:
+        messages_filepath: Filepath to the messages dataset
+        categories_filepath: Filepath to the categories dataset
+        
+    Returns:
+        (DataFrame) df: Merged Pandas dataframe
+    """
+    
     messages = pd.read_csv(messages_filepath)
     categories = pd.read_csv(categories_filepath)
     
@@ -10,6 +21,14 @@ def load_data(messages_filepath, categories_filepath):
 
 
 def clean_data(df):
+    """
+    Cleans merged dataset
+    
+    Args:
+        df: Merged pandas dataframe
+    Returns:
+        (DataFrame) df: Cleaned dataframe
+    """
     categories = df['categories'].str.split(';', expand=True)
     row = categories.iloc[0]
     category_colnames = row.str.split('-').str[0]
@@ -30,6 +49,14 @@ def clean_data(df):
     
 
 def save_data(df, database_filename):
+    """
+    Save the clean data into an sqlite database
+    
+    Args:
+        df:  Clean dataframe
+        database_filename: name of the database file
+    """
+    
     engine = create_engine('sqlite:///{}'.format(database_filename))
     df.to_sql('labeled_messages', engine, index=False, if_exists='replace')
     engine.dispose()
